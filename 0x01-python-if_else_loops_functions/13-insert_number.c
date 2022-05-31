@@ -1,97 +1,109 @@
-nclude "lists.h"
+#include <stdlib.h>
+
+#include "lists.h"
 
 
 
 /**
 
- * insert_node - inserts a new node
+ * insert_node - Inserts a number into a sorted singly linked list.
 
- * at a given position.
+ *
 
- * @head: head of a list.
+ * @head: Double pointer to a singly linked list
 
- * @number: index of the list where the new node is
+ *
 
- * added.
+ * @number: Value of the new node.
 
- * Return: the address of the new node, or NULL if it
+ *
 
- * failed.
+ * Return: The address of the new node, or NULL if it failed.
 
  */
+
+
 
 listint_t *insert_node(listint_t **head, int number)
 
 {
 
-	listint_t *new;
+	int flag = 0;
 
-	listint_t *h;
-
-	listint_t *h_prev;
+	listint_t *new_node = NULL, *actual = NULL, *after = NULL;
 
 
 
-	h = *head;
-
-	new = malloc(sizeof(listint_t));
-
-
-
-	if (new == NULL)
+	if (head == NULL)
 
 		return (NULL);
 
+	new_node = malloc(sizeof(listint_t));
 
+	if (!new_node)
 
-	while (h != NULL)
+		return (NULL);
 
-	{
-
-		if (h->n > number)
-
-			break;
-
-		h_prev = h;
-
-		h = h->next;
-
-	}
-
-
-
-	new->n = number;
-
-
+	new_node->n = number, new_node->next = NULL;
 
 	if (*head == NULL)
 
 	{
 
-		new->next = NULL;
+		*head = new_node;
 
-		*head = new;
+		return (*head);
 
 	}
 
-	else
+	actual = *head;
+
+	if (number <= actual->n)
 
 	{
 
-		new->next = h;
+		new_node->next = actual, *head = new_node;
 
-		if (h == *head)
-
-			*head = new;
-
-		else
-
-			h_prev->next = new;
+		return (*head);
 
 	}
 
+	if (number > actual->n && !actual->next)
 
+	{
 
-	return (new);
+		actual->next = new_node;
+
+		return (new_node);
+
+	}
+
+	after = actual->next;
+
+	while (actual)
+
+	{
+
+		if (!after)
+
+			actual->next = new_node, flag = 1;
+
+		else if (after->n == number)
+
+			actual->next = new_node, new_node->next = after, flag = 1;
+
+		else if (after->n > number && actual->n < number)
+
+			actual->next = new_node, new_node->next = after, flag = 1;
+
+		if (flag)
+
+			break;
+
+		after = after->next, actual = actual->next;
+
+	}
+
+	return (new_node);
 
 }
